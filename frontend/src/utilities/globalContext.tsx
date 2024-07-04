@@ -1,11 +1,13 @@
 import {createContext , useState, FC, ReactNode, useEffect} from 'react'
 import {Entry, EntryContextType} from '../@types/context'
 import axios from 'axios'
+import { lightTheme, darkTheme } from '../styles';
 
 export const EntryContext = createContext<EntryContextType | null>(null);
 
 export const EntryProvider: React.FC<{children : ReactNode}> = ({children}) => {
     const [entries, setEntries] = useState<Entry[]>([]);
+    const [theme, setTheme] = useState<string>("light");
 
     const initState = async () => {
         const data = await axios.get<Entry[]>('http://localhost:3001/get/')
@@ -15,6 +17,13 @@ export const EntryProvider: React.FC<{children : ReactNode}> = ({children}) => {
 
     useEffect(() => {
         initState()
+        
+        const storedTheme = localStorage.getItem("theme");
+        if (storedTheme) {
+          setTheme(storedTheme);
+          const themeStyles = storedTheme === "light" ? lightTheme : darkTheme
+          document.body.style.backgroundColor = themeStyles.rootBackground
+        }
       }, []);
 
     const saveEntry = async (entry: Entry) => {
@@ -36,8 +45,17 @@ export const EntryProvider: React.FC<{children : ReactNode}> = ({children}) => {
         await axios.delete<Entry>(`http://localhost:3001/delete/${id}`)
         setEntries(e => e.filter(entry => entry.id != id))
     }
+    
+    const toggleTheme = () => {
+      const newTheme = theme === "light" ? "dark" : "light";
+      setTheme(newTheme);
+      localStorage.setItem("theme", newTheme);
+      const themeStyles = newTheme === "light" ? lightTheme : darkTheme
+      document.body.style.backgroundColor = themeStyles.rootBackground
+    }
+    
     return (
-        <EntryContext.Provider value={{ entries, saveEntry, updateEntry, deleteEntry }}>
+        <EntryContext.Provider value={{ entries, saveEntry, updateEntry, deleteEntry, theme, toggleTheme }}>
           {children}
         </EntryContext.Provider>
       )

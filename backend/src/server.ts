@@ -27,9 +27,15 @@ server.get<{ Body: Entry; Params: { id: string } }>(
 
 server.post<{ Body: Entry }>("/create/", async (req, reply) => {
   let newEntryBody = req.body;
+  
   newEntryBody.created_at
     ? (newEntryBody.created_at = new Date(req.body.created_at))
     : (newEntryBody.created_at = new Date());
+  
+  newEntryBody.scheduledDate 
+    ? (newEntryBody.scheduledDate = new Date(req.body.scheduledDate))
+    : (newEntryBody.scheduledDate = new Date());
+
   try {
     const createdEntryData = await Prisma.entry.create({ data: req.body });
     reply.send(createdEntryData);
@@ -51,9 +57,14 @@ server.put<{ Params: { id: string }; Body: Entry }>(
   "/update/:id",
   async (req, reply) => {
     let updatedEntryBody = req.body;
+    
     updatedEntryBody.created_at
       ? (updatedEntryBody.created_at = new Date(req.body.created_at))
       : (updatedEntryBody.created_at = new Date());
+    
+    updatedEntryBody.scheduledDate 
+      ? (updatedEntryBody.scheduledDate = new Date(req.body.scheduledDate))
+      : (updatedEntryBody.scheduledDate = new Date());
     try {
       await Prisma.entry.update({
         data: req.body,

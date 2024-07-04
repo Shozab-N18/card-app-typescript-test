@@ -11,8 +11,9 @@ datasource db {
 }
 
 model Entry {
-  id          String   @id @default(uuid())
-  title       String
-  description String
-  created_at  DateTime
+  id            String   @id @default(uuid())
+  title         String
+  description   String
+  created_at    DateTime
+  scheduledDate DateTime
 }

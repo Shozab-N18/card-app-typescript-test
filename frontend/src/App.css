@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Target the calendar icon specifically for WebKit browsers */
+/* input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+} */
